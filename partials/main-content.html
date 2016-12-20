@@ -1,0 +1,48 @@
+<!-- <pre>{{grids | json}}</pre> -->
+<header ng-if="!count.length">
+    <div class="flex-row align-items-center">
+        <input type="text" ng-model="search" placeholder="find..." ng-change="doSearch(search)" ng-class="{'active': search.length}" style="width: {{(search.length < 5 ? 5 : search.length)}}em" />
+        <span class="fa xfa-times pad-left-1" ng-click="$parent.search = '';clearCurrent()" ng-if="search">&times;</i>
+    </div>
+    <div class="hit-box flex-row align-items-center">
+        <div class="grid-hits flex-1 text-center flex-row flex-0-1-auto-all justify-content-center" ng-repeat="grid in grids">
+            <span ng-repeat="hit in grid.hits" scroll-in=".grid-{{grid.id}} .grid-item-wrapper" scroll-to=".{{hit}}">&bull;</span>
+        </div>
+    </div>
+</header>
+
+<div class="the-grid">
+    <div class="a-grid grid-{{grid.id}}" ng-repeat="grid in grids" ng-class="{'miss': current.id && !current.grids[$index].hit}">
+        <header class="align-items-center">
+            <div class="flex-1 text-center">{{grid.id}}</div>
+            <div class="meter flex-4"><div style="width:{{grid.percentUsed}}%" ng-class="meterColor(grid.percentUsed, 'bg')"></div></div>
+            <div class="flex-2 text-center">
+                <span class="ghost">{{grid.size}}</span>
+            </div>
+        </header>
+        <div class="grid-item-wrapper">
+            <ol>
+                <li ng-repeat="resource in grid.resources" ng-click="doTheSlotMachineThing(resource)" class="{{resource.id}}" ng-class="{'active': resource.active, 'found': resource.found}" style="height: {{resource.height}}em">
+                    <div class="name" ng-hide="resource.name == find.name" ng-class="{'ghost': find.name && find.name != resource.name}">
+                        {{resource.name}}
+                    </div>
+                    <div ng-show="resource.name == find.name" class="used flex-row justify-content-between">
+                        <span>{{resource.humanUsed}}</span>
+                        <span class="ghost">{{resource.percentAllocated}}% of {{grid.size}}</span>
+                    </div>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+<div class="the-bar" ng-if="count.length">
+    <h2 class="flex-row heading">
+        <span class="flex-1" ng-click="clearCurrent()">{{find.name}} <i class="fa xfa-times">&times;</i></span>
+    </h2>
+    <div class="grid-subheading">
+        <div class="flex-row grid-{{grid.id}} align-items-center" ng-repeat="grid in grids" ng-class="{'miss': current.id && !current.grids[$index].hit}">
+            <div class="meter flex-5" ng-if="resources[$index].data"><div style="width:{{resources[$index].data.percentUsed}}%" ng-class="meterColor(resources[$index].data.percentUsed, 'bg')"></div></div>
+            <div class="flex-2 text-center">{{resources[$index].data.humanAllocated}}</div>
+        </div>
+    </div>
+</div>
